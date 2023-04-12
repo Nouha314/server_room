@@ -22,7 +22,11 @@ class UsersCtr extends GetxController {
   }
 
   Map<String, SrUser> userMap = {};
+  Map<String, SrUser> userMapReq = {};
+
   List<SrUser> userList = [];
+  List<SrUser> userListReq = [];
+
   List<SrUser> foundUsersList = [];
   final TextEditingController typeAheadController = TextEditingController();
   bool shouldLoad = true;
@@ -30,8 +34,7 @@ class UsersCtr extends GetxController {
 
   getUsersData({bool printDet = false}) async {
     if (printDet) print('## downloading users from fireBase...');
-    List<DocumentSnapshot> usersData =
-        await getDocumentsByColl(usersColl.where('verified', isEqualTo: true));
+    List<DocumentSnapshot> usersData = await getDocumentsByColl(usersColl);
 
     // Remove any existing users
     userMap.clear();
@@ -39,10 +42,15 @@ class UsersCtr extends GetxController {
     //fill user map
     for (var _user in usersData) {
       //fill userMap
-      userMap[_user.id] = SrUserFromMap(_user);
+      if (_user.get('verified') == true)
+        userMap[_user.id] = SrUserFromMap(_user);
+      else
+        userMapReq[_user.id] = SrUserFromMap(_user);
     }
 
     userList = userMap.entries.map((entry) => entry.value).toList();
+    userListReq = userMapReq.entries.map((entry) => entry.value).toList();
+
     foundUsersList = userList;
     shouldLoad = false;
     if (printDet) print('## < ${userMap.length} > users loaded from database');
@@ -58,7 +66,7 @@ class UsersCtr extends GetxController {
     } else {
       results = userList
           .where((user) =>
-              user.email!.toLowerCase().contains(enteredKeyword.toLowerCase()))
+              user.name!.toLowerCase().contains(enteredKeyword.toLowerCase()))
           .toList();
     }
 

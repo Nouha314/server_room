@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:random_avatar/random_avatar.dart';
 import 'package:server_room/admin/requestsList.dart';
 
+import '../models/user.dart';
 import 'approvedListCtr.dart';
 
 class ApprovedListView extends StatefulWidget {
@@ -126,17 +128,57 @@ class _ApprovedListViewState extends State<ApprovedListView> {
                           physics: ScrollPhysics(),
                           //itemExtent: 130,
                           padding: const EdgeInsets.symmetric(
-                              vertical: 20, horizontal: 20),
+                              vertical: 20, horizontal: 5),
                           //shrinkWrap: true,
                           itemCount: gc.foundUsersList.length,
                           itemBuilder: (BuildContext context, int index) {
+                            SrUser user = gc.foundUsersList[index];
+                            bool requested = false;
                             //setState(() {});
                             //String key = gc.foundUsersMap.keys.elementAt(index);
                             //return gc.userCard(gc.foundUsersList[index]);
                             return Container(
-                              height: 40,
-                              width: 120,
-                              color: Colors.blue,
+                              child: Card(
+                                shadowColor: Colors.black,
+                                //color: Colors.blueGrey,
+                                child: ListTile(
+                                  trailing: requested
+                                      ? Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.check,
+                                                  color: Colors.green,
+                                                ),
+                                                onPressed: () {},
+                                                tooltip: "Approve",
+                                              ),
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.close,
+                                                  color: Colors.red,
+                                                ),
+                                                onPressed: () {},
+                                                tooltip: "Reject",
+                                              ),
+                                            ])
+                                      : Container(),
+                                  leading: RandomAvatar('saytoonz',
+                                      height: 50, width: 50),
+                                  title: Text(user.email!),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(height: 4),
+                                      Text("Password: ${user.pwd}"),
+                                      SizedBox(height: 4),
+                                      Text("Name: ${user.name}"),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             );
                           }),
                     )

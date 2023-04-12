@@ -43,6 +43,7 @@ dependencies:
   get: ^4.6.5
   awesome_dialog: ^3.0.2
   fluttertoast: ^8.2.1
+  random_avatar: ^0.0.8
 
 
 
